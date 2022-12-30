@@ -54,6 +54,7 @@ type Client struct {
 	mu                sync.Mutex
 	EncodingBase64    bool
 	Connected         bool
+	Cookies           []http.Cookie
 }
 
 // NewClient creates a new client
@@ -312,6 +313,11 @@ func (c *Client) request(ctx context.Context, stream string) (*http.Response, er
 	// Add user specified headers
 	for k, v := range c.Headers {
 		req.Header.Set(k, v)
+	}
+
+	// Add user specified cookies
+	for i := range c.Cookies {
+		req.AddCookie(&c.Cookies[i])
 	}
 
 	return c.Connection.Do(req)
